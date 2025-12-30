@@ -5,7 +5,7 @@
   --text-primary: #ffffff;
   --text-secondary: #a0a0a0;
   --text-tertiary: #666666;
-  --accent: #7c3aed;
+  --accent: lch(43.4% 102.26 309.33);
   --accent-glow: rgba(124, 58, 237, 0.15);
   --accent-light: #a78bfa;
   --border: #333333;
@@ -230,6 +230,15 @@ body {
 .hero-cta-group {
   display: flex;
   gap: 1rem;
+}
+
+.project-image {
+  width: 100%;
+  display: block;
+  border-radius: 15px; /* round image */
+  padding: 10px; /* space around image */
+  background: #000; /* optional – helps padding be visible */
+  box-sizing: border-box;
 }
 
 .btn-primary {
@@ -916,4 +925,40 @@ body {
     gap: 1rem;
     align-items: flex-start;
   }
+}
+.contact-method {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none;
+  padding: 14px;
+  border-radius: 12px;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.contact-method:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
+}
+
+.contact-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #111;
+  color: #fff;
+  font-size: 18px;
+}
+
+.contact-details h4 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.contact-details p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.7;
 }
