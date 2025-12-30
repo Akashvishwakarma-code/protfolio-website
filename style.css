@@ -199,6 +199,7 @@ body {
 .badge-text {
   font-size: 0.9rem;
   color: var(--text-secondary);
+  display: flex;
 }
 
 .badge-dot {
@@ -209,7 +210,7 @@ body {
 }
 
 .hero-title {
-  font-size: 4rem;
+  font-size: 5rem;
   font-weight: 700;
   line-height: 1.1;
   margin-bottom: 1.5rem;
