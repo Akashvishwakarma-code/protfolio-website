@@ -1470,43 +1470,365 @@
               </div>
             </div>
           </div>
+
+          <!-- Fixed Form with proper FormSpree integration -->
           <form
+            id="contactForm"
             class="contact-form"
             action="https://formspree.io/f/xgoeqbyk"
             method="POST"
           >
+            <input
+              type="hidden"
+              name="_subject"
+              value="New Contact Form Submission"
+            />
+            <input type="text" name="_gotcha" style="display: none" />
+
             <div class="form-group">
-              <label class="form-label">Name</label>
-              <input type="text" class="form-input" placeholder="Your name" />
+              <label class="form-label" for="name">Name *</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                class="form-input"
+                placeholder="Your name"
+                required
+              />
+              <div class="error-message" id="name-error"></div>
             </div>
             <div class="form-group">
-              <label class="form-label">Email</label>
+              <label class="form-label" for="email">Email *</label>
               <input
                 type="email"
+                id="email"
+                name="email"
                 class="form-input"
                 placeholder="hello@example.com"
+                required
               />
+              <div class="error-message" id="email-error"></div>
             </div>
             <div class="form-group">
-              <label class="form-label">Message</label>
+              <label class="form-label" for="message">Message *</label>
               <textarea
+                id="message"
+                name="message"
                 class="form-input form-textarea"
                 placeholder="Tell me about your project..."
+                required
               ></textarea>
+              <div class="error-message" id="message-error"></div>
             </div>
+
+            <!-- Status message container -->
+            <div class="form-status" id="formStatus"></div>
+
             <button
               type="submit"
               class="btn-primary"
+              id="submitBtn"
               style="align-self: flex-start"
             >
-              Send Message
-              <span>→</span>
+              <span id="btnText">Send Message →</span>
+              <span id="btnLoading" style="display: none">Sending...</span>
             </button>
           </form>
         </div>
       </div>
     </section>
 
+    <style>
+      /* Responsive Styles for Contact Section */
+      .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: start;
+      }
+
+      .contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .contact-method {
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 25px;
+        background: rgba(30, 41, 59, 0.6);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(100, 116, 139, 0.2);
+      }
+
+      .contact-form {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        padding: 40px;
+        background: rgba(30, 41, 59, 0.8);
+        border-radius: 16px;
+        border: 1px solid rgba(100, 116, 139, 0.3);
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .form-input {
+        padding: 15px;
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid #475569;
+        border-radius: 10px;
+        color: #f8fafc;
+        font-size: 1rem;
+        transition: all 0.3s;
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: #60a5fa;
+        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+      }
+
+      .form-textarea {
+        min-height: 150px;
+        resize: vertical;
+      }
+
+      /* Form validation styles */
+      .form-input.error {
+        border-color: #f87171;
+        background-color: rgba(239, 68, 68, 0.05);
+      }
+
+      .error-message {
+        color: #f87171;
+        font-size: 0.875rem;
+        margin-top: 5px;
+        min-height: 20px;
+      }
+
+      /* Form status messages */
+      .form-status {
+        padding: 15px;
+        border-radius: 10px;
+        font-weight: 500;
+        display: none;
+      }
+
+      .form-status.success {
+        background-color: rgba(34, 197, 94, 0.15);
+        color: #4ade80;
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        display: block;
+      }
+
+      .form-status.error {
+        background-color: rgba(239, 68, 68, 0.15);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        display: block;
+      }
+
+      /* Loading state for button */
+      .btn-primary:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 992px) {
+        .contact-grid {
+          grid-template-columns: 1fr;
+          gap: 40px;
+        }
+
+        .contact-form {
+          padding: 30px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .contact-method {
+          padding: 20px;
+        }
+
+        .contact-form {
+          padding: 25px;
+        }
+
+        .btn-primary {
+          width: 100%;
+          align-self: stretch !important;
+          justify-content: center;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .contact-method {
+          flex-direction: column;
+          text-align: center;
+          align-items: center;
+          gap: 15px;
+        }
+
+        .contact-icon {
+          margin-bottom: 5px;
+        }
+
+        .contact-form {
+          padding: 20px;
+        }
+      }
+    </style>
+
+    <script>
+      // Form submission handler
+      document.addEventListener("DOMContentLoaded", function () {
+        const contactForm = document.getElementById("contactForm");
+        const formStatus = document.getElementById("formStatus");
+        const submitBtn = document.getElementById("submitBtn");
+        const btnText = document.getElementById("btnText");
+        const btnLoading = document.getElementById("btnLoading");
+
+        if (contactForm) {
+          contactForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            // Reset status
+            formStatus.className = "form-status";
+            formStatus.style.display = "none";
+
+            // Clear previous errors
+            document.querySelectorAll(".error-message").forEach((el) => {
+              el.textContent = "";
+            });
+            document.querySelectorAll(".form-input").forEach((el) => {
+              el.classList.remove("error");
+            });
+
+            // Validate form
+            let isValid = true;
+
+            // Validate name
+            const nameInput = document.getElementById("name");
+            const nameError = document.getElementById("name-error");
+            if (!nameInput.value.trim()) {
+              nameInput.classList.add("error");
+              nameError.textContent = "Please enter your name";
+              isValid = false;
+            }
+
+            // Validate email
+            const emailInput = document.getElementById("email");
+            const emailError = document.getElementById("email-error");
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailInput.value.trim()) {
+              emailInput.classList.add("error");
+              emailError.textContent = "Please enter your email";
+              isValid = false;
+            } else if (!emailPattern.test(emailInput.value)) {
+              emailInput.classList.add("error");
+              emailError.textContent = "Please enter a valid email address";
+              isValid = false;
+            }
+
+            // Validate message
+            const messageInput = document.getElementById("message");
+            const messageError = document.getElementById("message-error");
+            if (!messageInput.value.trim()) {
+              messageInput.classList.add("error");
+              messageError.textContent = "Please enter your message";
+              isValid = false;
+            }
+
+            if (!isValid) return;
+
+            // Show loading state
+            submitBtn.disabled = true;
+            btnText.style.display = "none";
+            btnLoading.style.display = "inline";
+
+            try {
+              // Prepare form data
+              const formData = new FormData(contactForm);
+
+              // Submit to Formspree
+              const response = await fetch(contactForm.action, {
+                method: "POST",
+                body: formData,
+                headers: {
+                  Accept: "application/json",
+                },
+              });
+
+              if (response.ok) {
+                // Success
+                formStatus.textContent =
+                  "Thank you! Your message has been sent successfully.";
+                formStatus.className = "form-status success";
+                formStatus.style.display = "block";
+                contactForm.reset();
+              } else {
+                // Formspree error
+                const errorData = await response.json();
+                let errorMessage =
+                  "Oops! There was a problem submitting your form.";
+
+                if (errorData.errors && errorData.errors.length > 0) {
+                  errorMessage = errorData.errors
+                    .map((error) => error.message)
+                    .join(", ");
+                }
+
+                formStatus.textContent = errorMessage;
+                formStatus.className = "form-status error";
+                formStatus.style.display = "block";
+              }
+            } catch (error) {
+              // Network error
+              formStatus.textContent =
+                "Network error. Please check your connection and try again.";
+              formStatus.className = "form-status error";
+              formStatus.style.display = "block";
+            } finally {
+              // Reset button state
+              submitBtn.disabled = false;
+              btnText.style.display = "inline";
+              btnLoading.style.display = "none";
+
+              // Auto-hide status message after 5 seconds
+              if (formStatus.style.display === "block") {
+                setTimeout(() => {
+                  formStatus.style.display = "none";
+                }, 5000);
+              }
+            }
+          });
+
+          // Real-time validation as user types
+          const formInputs = contactForm.querySelectorAll(".form-input");
+          formInputs.forEach((input) => {
+            input.addEventListener("input", function () {
+              if (this.classList.contains("error")) {
+                this.classList.remove("error");
+                const errorId = this.id + "-error";
+                const errorElement = document.getElementById(errorId);
+                if (errorElement) {
+                  errorElement.textContent = "";
+                }
+              }
+            });
+          });
+        }
+      });
+    </script>
     <!-- Footer -->
     <footer class="footer">
       <div class="container">
