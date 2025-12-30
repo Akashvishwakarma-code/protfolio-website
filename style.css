@@ -558,6 +558,7 @@ body {
   border-radius: var(--radius-xl);
   padding: 4rem;
   border: 1px solid var(--border);
+  overflow: hidden;
 }
 
 .contact-info {
